@@ -54,15 +54,76 @@ export const Binance = () => {
   }
 
   return (
-    <table style={{ margin: "30px", minWidth: "300px" }}>
-      <thead>
-        <tr>
-          <th>Coin</th>
-          <th>Price</th>
+    <table
+      style={{
+        minWidth: "500px",
+        tableLayout: "fixed",
+        borderCollapse: "collapse",
+      }}
+    >
+      <caption
+        style={{
+          backgroundColor: "#ff5a61",
+          color: "black",
+          fontWeight: 700,
+          fontSize: "25px",
+        }}
+      >
+        Crypto Table
+      </caption>
+      <thead
+        style={{
+          display: "block",
+          minHeight: "40px",
+          minWidth: "500px",
+          backgroundColor: "#ffdf4a",
+        }}
+      >
+        <tr
+          style={{
+            display: "flex",
+            alignItems: "center",
+            minHeight: "40px",
+            minWidth: "500px",
+          }}
+        >
+          <th
+            style={{
+              textAlign: "left",
+              minWidth: "250px",
+              paddingLeft: 20,
+              whiteSpace: "nowrap",
+              fontWeight: 700,
+              fontSize: "20px",
+            }}
+          >
+            Coin
+          </th>
+          <th
+            style={{
+              textAlign: "left",
+              width: "50%",
+              paddingLeft: 20,
+              whiteSpace: "nowrap",
+              fontWeight: 700,
+              fontSize: "20px",
+            }}
+          >
+            Price
+          </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody
+        style={{
+          display: "block",
+          width: "100%",
+          overflowY: "scroll",
+          minHeight: "400px",
+          maxHeight: "600px",
+        }}
+      >
         {dataPrices
+          .filter((coin) => coin.symbol.toLowerCase().endsWith("usdt"))
           .sort((a, b) => Number(b.price) - Number(a.price))
           .map((coin, index) => {
             const matchingCoin = Array.isArray(changePrice)
@@ -71,10 +132,42 @@ export const Binance = () => {
             if (matchingCoin && matchingCoin.c) {
               coin.price = matchingCoin.c;
             }
+            const price = Number(coin.price).toFixed(2);
             return (
-              <tr key={index}>
-                <td style={{ textAlign: "left" }}>{coin.symbol}</td>
-                <td style={{ textAlign: "left" }}>$ {coin.price}</td>
+              <tr
+                key={index}
+                style={{
+                  height: "40px",
+                  minWidth: "500px",
+                  backgroundColor: "#ff9f53",
+                }}
+              >
+                <td
+                  style={{
+                    textAlign: "left",
+                    width: "250px",
+                    borderTop: "0px",
+                    whiteSpace: "nowrap",
+                    paddingLeft: 20,
+                    fontWeight: 400,
+                    fontSize: "15px",
+                  }}
+                >
+                  {coin.symbol}
+                </td>
+                <td
+                  style={{
+                    textAlign: "left",
+                    width: "240px",
+                    borderTop: "0px",
+                    whiteSpace: "nowrap",
+                    paddingLeft: 20,
+                    fontWeight: 600,
+                    fontSize: "15px",
+                  }}
+                >
+                  $ <span style={{ color: "red" }}>{price}</span>
+                </td>
               </tr>
             );
           })}
