@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { useQuery } from "react-query";
 import { BinanceService } from "../services/BinanceApi.service";
+import { FixedSizeList } from "react-window";
 
 export const Binance = () => {
   const [changePrice, setChangePrice] = useState({});
+  //   const [changeColor, setChangeColor] = useState(false);
   const {
     data: dataPrices,
     isLoading: isLoadingPrices,
@@ -113,65 +115,77 @@ export const Binance = () => {
           </th>
         </tr>
       </thead>
-      <tbody
-        style={{
-          display: "block",
-          width: "100%",
-          overflowY: "scroll",
-          minHeight: "400px",
-          maxHeight: "600px",
-        }}
+      <FixedSizeList
+        height={400}
+        width={500}
+        itemSize={40}
+        itemCount={dataPrices.length}
+        sx={{ overflowX: "hidden" }}
       >
-        {dataPrices
-          .filter((coin) => coin.symbol.toLowerCase().endsWith("usdt"))
-          .sort((a, b) => Number(b.price) - Number(a.price))
-          .map((coin, index) => {
-            const matchingCoin = Array.isArray(changePrice)
-              ? changePrice.find((changeCoin) => changeCoin.s === coin.symbol)
-              : undefined;
-            if (matchingCoin && matchingCoin.c) {
-              coin.price = matchingCoin.c;
-            }
-            const price = Number(coin.price).toFixed(2);
-            return (
-              <tr
-                key={index}
+        {({ index, style }) => {
+          const coin = dataPrices
+            .filter((coin) => coin?.symbol?.toLowerCase().endsWith("usdt"))
+            .sort((a, b) => Number(b.price) - Number(a.price))[index];
+          const matchingCoin = Array.isArray(changePrice)
+            ? changePrice.find((changeCoin) => changeCoin.s === coin.symbol)
+            : undefined;
+          if (matchingCoin && matchingCoin.c) {
+            coin.price = matchingCoin.c;
+            // setChangeColor(true);
+          }
+          const price = Number(coin.price).toFixed(5);
+          return (
+            <tr
+              key={index}
+              style={{
+                ...style,
+                height: "40px",
+                minWidth: "500px",
+                backgroundColor: "#ff9f53",
+              }}
+            >
+              <td
                 style={{
-                  height: "40px",
-                  minWidth: "500px",
-                  backgroundColor: "#ff9f53",
+                  textAlign: "left",
+                  width: "250px",
+                  borderTop: "0px",
+                  whiteSpace: "nowrap",
+                  paddingLeft: 20,
+                  fontWeight: 400,
+                  fontSize: "15px",
                 }}
               >
-                <td
-                  style={{
-                    textAlign: "left",
-                    width: "250px",
-                    borderTop: "0px",
-                    whiteSpace: "nowrap",
-                    paddingLeft: 20,
-                    fontWeight: 400,
-                    fontSize: "15px",
-                  }}
+                {coin.symbol}
+              </td>
+              <td
+                style={{
+                  textAlign: "left",
+                  width: "240px",
+                  borderTop: "0px",
+                  whiteSpace: "nowrap",
+                  paddingLeft: 20,
+                  fontWeight: 600,
+                  fontSize: "15px",
+                }}
+              >
+                ${" "}
+                <span
+                  style={
+                    {
+                      // color: changeColor && "red",
+                      // transitionProperty: "color",
+                      // transitionDuration: "1s",
+                      // transitionTimingFunction: "ease-in-out",
+                    }
+                  }
                 >
-                  {coin.symbol}
-                </td>
-                <td
-                  style={{
-                    textAlign: "left",
-                    width: "240px",
-                    borderTop: "0px",
-                    whiteSpace: "nowrap",
-                    paddingLeft: 20,
-                    fontWeight: 600,
-                    fontSize: "15px",
-                  }}
-                >
-                  $ <span>{price}</span>
-                </td>
-              </tr>
-            );
-          })}
-      </tbody>
+                  {price}
+                </span>
+              </td>
+            </tr>
+          );
+        }}
+      </FixedSizeList>
     </table>
   );
 };
