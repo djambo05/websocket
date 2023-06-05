@@ -5,6 +5,16 @@ import { BinanceService } from "../services/BinanceApi.service";
 
 export const Binance = () => {
   const [changePrice, setChangePrice] = useState({});
+  const {
+    data: dataPrices,
+    isLoading: isLoadingPrices,
+    isError: isErrorPrices,
+  } = useQuery(["binanceAll"], BinanceService.getAllPrices, {
+    keepPreviousData: true,
+    refetchOnWindowFocus: false,
+    staleTime: Infinity,
+    cacheTime: Infinity,
+  });
   useEffect(() => {
     const ws = new WebSocket(
       "wss://stream.binancefuture.com/stream?streams=!miniTicker@arr"
@@ -17,7 +27,7 @@ export const Binance = () => {
     ws.onmessage = (event) => {
       //   console.log("Received message:", event.data);
       const eventData = JSON.parse(event.data);
-      setChangePrice(eventData);
+      setChangePrice(eventData.data);
     };
 
     ws.onclose = () => {
@@ -32,17 +42,7 @@ export const Binance = () => {
       ws.close();
     };
   }, []);
-  const {
-    data: dataPrices,
-    isLoading: isLoadingPrices,
-    isError: isErrorPrices,
-  } = useQuery(["binanceAll"], BinanceService.getAllPrices, {
-    keepPreviousData: true,
-    refetchOnWindowFocus: false,
-    staleTime: Infinity,
-    cacheTime: Infinity,
-  });
-  console.log(changePrice);
+
   if (isLoadingPrices) {
     return <h1>Loading...</h1>;
   }
@@ -65,6 +65,12 @@ export const Binance = () => {
         {dataPrices
           .sort((a, b) => Number(b.price) - Number(a.price))
           .map((coin, index) => {
+            const matchingCoin = Array.isArray(changePrice)
+              ? changePrice.find((changeCoin) => changeCoin.s === coin.symbol)
+              : undefined;
+            if (matchingCoin && matchingCoin.c) {
+              coin.price = matchingCoin.c;
+            }
             return (
               <tr key={index}>
                 <td style={{ textAlign: "left" }}>{coin.symbol}</td>
