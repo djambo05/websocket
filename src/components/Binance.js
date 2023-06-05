@@ -1,8 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
+import { useEffect } from "react";
 import { useQuery } from "react-query";
 import { BinanceService } from "../services/BinanceApi.service";
 
 export const Binance = () => {
+  const [changePrice, setChangePrice] = useState({});
+  useEffect(() => {
+    const ws = new WebSocket(
+      "wss://stream.binancefuture.com/stream?streams=!miniTicker@arr"
+    );
+
+    ws.onopen = () => {
+      //   console.log("WebSocket connected");
+    };
+
+    ws.onmessage = (event) => {
+      //   console.log("Received message:", event.data);
+      const eventData = JSON.parse(event.data);
+      setChangePrice(eventData);
+    };
+
+    ws.onclose = () => {
+      //   console.log("WebSocket disconnected");
+    };
+
+    ws.onerror = (error) => {
+      //   console.error("WebSocket error:", error);
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, []);
   const {
     data: dataPrices,
     isLoading: isLoadingPrices,
@@ -13,7 +42,7 @@ export const Binance = () => {
     staleTime: Infinity,
     cacheTime: Infinity,
   });
-
+  console.log(changePrice);
   if (isLoadingPrices) {
     return <h1>Loading...</h1>;
   }
@@ -35,11 +64,11 @@ export const Binance = () => {
       <tbody>
         {dataPrices
           .sort((a, b) => Number(b.price) - Number(a.price))
-          .map((obj, index) => {
+          .map((coin, index) => {
             return (
               <tr key={index}>
-                <td style={{ textAlign: "left" }}>{obj.symbol}</td>
-                <td style={{ textAlign: "left" }}>$ {obj.price}</td>
+                <td style={{ textAlign: "left" }}>{coin.symbol}</td>
+                <td style={{ textAlign: "left" }}>$ {coin.price}</td>
               </tr>
             );
           })}
