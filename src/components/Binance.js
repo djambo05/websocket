@@ -21,7 +21,7 @@ export const Binance = () => {
     );
 
     ws.onopen = () => {
-      //   console.log("WebSocket connected");
+      console.log("WebSocket connected");
     };
 
     ws.onmessage = (event) => {
@@ -31,11 +31,11 @@ export const Binance = () => {
     };
 
     ws.onclose = () => {
-      //   console.log("WebSocket disconnected");
+      console.log("WebSocket disconnected");
     };
 
     ws.onerror = (error) => {
-      //   console.error("WebSocket error:", error);
+      console.error("WebSocket error:", error);
     };
 
     return () => {
@@ -166,7 +166,7 @@ export const Binance = () => {
                     fontSize: "15px",
                   }}
                 >
-                  $ <span style={{ color: "red" }}>{price}</span>
+                  $ <span>{price}</span>
                 </td>
               </tr>
             );
