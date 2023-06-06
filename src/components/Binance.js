@@ -115,77 +115,78 @@ export const Binance = () => {
           </th>
         </tr>
       </thead>
-      <FixedSizeList
-        height={400}
-        width={500}
-        itemSize={40}
-        itemCount={dataPrices.length}
-        sx={{ overflowX: "hidden" }}
-      >
-        {({ index, style }) => {
-          const coin = dataPrices
-            .filter((coin) => coin?.symbol?.toLowerCase().endsWith("usdt"))
-            .sort((a, b) => Number(b.price) - Number(a.price))[index];
-          const matchingCoin = Array.isArray(changePrice)
-            ? changePrice.find((changeCoin) => changeCoin.s === coin.symbol)
-            : undefined;
-          if (matchingCoin && matchingCoin.c) {
-            coin.price = matchingCoin.c;
-            // setChangeColor(true);
-          }
-          const price = Number(coin.price).toFixed(5);
-          return (
-            <tr
-              key={index}
-              style={{
-                ...style,
-                height: "40px",
-                minWidth: "500px",
-                backgroundColor: "#ff9f53",
-              }}
-            >
-              <td
+      <tbody style={{ overflowX: "hidden" }}>
+        <FixedSizeList
+          height={400}
+          width={500}
+          itemSize={40}
+          itemCount={dataPrices.length}
+        >
+          {({ index, style }) => {
+            const coin = dataPrices
+              .filter((coin) => coin?.symbol?.toLowerCase().endsWith("usdt"))
+              .sort((a, b) => Number(b.price) - Number(a.price))[index];
+            const matchingCoin = Array.isArray(changePrice)
+              ? changePrice.find((changeCoin) => changeCoin.s === coin.symbol)
+              : undefined;
+            if (matchingCoin && matchingCoin.c) {
+              coin.price = matchingCoin.c;
+              // setChangeColor(true);
+            }
+            const price = Number(coin.price).toFixed(5);
+            return (
+              <tr
+                key={index}
                 style={{
-                  textAlign: "left",
-                  width: "250px",
-                  borderTop: "0px",
-                  whiteSpace: "nowrap",
-                  paddingLeft: 20,
-                  fontWeight: 400,
-                  fontSize: "15px",
+                  ...style,
+                  height: "40px",
+                  minWidth: "500px",
+                  backgroundColor: "#ff9f53",
                 }}
               >
-                {coin.symbol}
-              </td>
-              <td
-                style={{
-                  textAlign: "left",
-                  width: "240px",
-                  borderTop: "0px",
-                  whiteSpace: "nowrap",
-                  paddingLeft: 20,
-                  fontWeight: 600,
-                  fontSize: "15px",
-                }}
-              >
-                ${" "}
-                <span
-                  style={
-                    {
-                      // color: changeColor && "red",
-                      // transitionProperty: "color",
-                      // transitionDuration: "1s",
-                      // transitionTimingFunction: "ease-in-out",
-                    }
-                  }
+                <td
+                  style={{
+                    textAlign: "left",
+                    width: "250px",
+                    borderTop: "0px",
+                    whiteSpace: "nowrap",
+                    paddingLeft: 20,
+                    fontWeight: 400,
+                    fontSize: "15px",
+                  }}
                 >
-                  {price}
-                </span>
-              </td>
-            </tr>
-          );
-        }}
-      </FixedSizeList>
+                  {coin.symbol}
+                </td>
+                <td
+                  style={{
+                    textAlign: "left",
+                    width: "240px",
+                    borderTop: "0px",
+                    whiteSpace: "nowrap",
+                    paddingLeft: 20,
+                    fontWeight: 600,
+                    fontSize: "15px",
+                  }}
+                >
+                  ${" "}
+                  <span
+                    style={
+                      {
+                        // color: changeColor && "red",
+                        // transitionProperty: "color",
+                        // transitionDuration: "1s",
+                        // transitionTimingFunction: "ease-in-out",
+                      }
+                    }
+                  >
+                    {price}
+                  </span>
+                </td>
+              </tr>
+            );
+          }}
+        </FixedSizeList>
+      </tbody>
     </table>
   );
 };
