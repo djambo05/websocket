@@ -120,14 +120,19 @@ export const Binance = () => {
           height={400}
           width={500}
           itemSize={40}
-          itemCount={dataPrices.length}
+          itemCount={
+            dataPrices
+              .filter((coin) => coin?.symbol?.toLowerCase().endsWith("usdt"))
+              .sort((a, b) => Number(b.price) - Number(a.price)).length
+          }
         >
           {({ index, style }) => {
-            const coin = dataPrices
-              .filter((coin) => coin?.symbol?.toLowerCase().endsWith("usdt"))
-              .sort((a, b) => Number(b.price) - Number(a.price))[index];
+            const coin = dataPrices[index];
+            if (!coin) {
+              return null;
+            }
             const matchingCoin = Array.isArray(changePrice)
-              ? changePrice.find((changeCoin) => changeCoin.s === coin.symbol)
+              ? changePrice.find((changeCoin) => changeCoin.s === coin?.symbol)
               : undefined;
             if (matchingCoin && matchingCoin.c) {
               coin.price = matchingCoin.c;
@@ -155,7 +160,7 @@ export const Binance = () => {
                     fontSize: "15px",
                   }}
                 >
-                  {coin.symbol}
+                  {coin?.symbol}
                 </td>
                 <td
                   style={{
