@@ -54,7 +54,9 @@ export const Binance = () => {
   if (!dataPrices) {
     return <h1>No data</h1>;
   }
-
+  const coins = dataPrices
+    .filter((coin) => coin?.symbol?.toLowerCase().endsWith("usdt"))
+    .sort((a, b) => Number(b.price) - Number(a.price));
   return (
     <table
       style={{
@@ -120,14 +122,10 @@ export const Binance = () => {
           height={400}
           width={500}
           itemSize={40}
-          itemCount={
-            dataPrices
-              .filter((coin) => coin?.symbol?.toLowerCase().endsWith("usdt"))
-              .sort((a, b) => Number(b.price) - Number(a.price)).length
-          }
+          itemCount={coins.length}
         >
           {({ index, style }) => {
-            const coin = dataPrices[index];
+            const coin = coins[index];
             if (!coin) {
               return null;
             }
