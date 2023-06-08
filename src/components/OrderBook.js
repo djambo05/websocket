@@ -57,7 +57,8 @@ export const OrderBook = () => {
             fontSize: "20px",
           }}
         >
-          sell
+          <span>Selling Price</span>
+          <span style={{ marginLeft: "60px" }}>coins</span>
         </div>
         <div
           style={{
@@ -69,19 +70,34 @@ export const OrderBook = () => {
             fontSize: "20px",
           }}
         >
-          buy
+          <span>Buying Price</span>
+          <span style={{ marginLeft: "60px" }}>coins</span>
         </div>
       </div>
       <div style={{ display: "flex", width: "100%" }}>
         <ul
           style={{ listStyle: "none", minWidth: "50%", margin: 0, padding: 0 }}
         >
-          <li>sell</li>
+          <li
+            style={{
+              display: "flex",
+              columnGap: "90px",
+              paddingLeft: "20px",
+            }}
+          >
+            <span>1</span>
+            <span style={{ marginLeft: "60px" }}>f</span>
+          </li>
         </ul>
         <ul
           style={{ listStyle: "none", minWidth: "50%", margin: 0, padding: 0 }}
         >
-          <li>buy</li>
+          <li
+            style={{ display: "flex", columnGap: "90px", paddingLeft: "20px" }}
+          >
+            <span>1</span>
+            <span style={{ marginLeft: "60px" }}>f</span>
+          </li>
         </ul>
       </div>
     </div>
