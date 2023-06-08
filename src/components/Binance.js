@@ -56,137 +56,141 @@ export const Binance = () => {
     .filter((coin) => coin?.symbol?.toLowerCase().endsWith("usdt"))
     .sort((a, b) => Number(b.price) - Number(a.price));
   return (
-    <table
-      style={{
-        minWidth: "500px",
-        tableLayout: "fixed",
-        borderCollapse: "collapse",
-      }}
-    >
-      <caption
+    <div>
+      <table
         style={{
-          backgroundColor: "#ff5a61",
-          color: "black",
-          fontWeight: 700,
-          fontSize: "25px",
-        }}
-      >
-        Crypto Table
-      </caption>
-      <thead
-        style={{
-          display: "block",
-          minHeight: "40px",
           minWidth: "500px",
-          backgroundColor: "#ffdf4a",
+          tableLayout: "fixed",
+          borderCollapse: "collapse",
         }}
       >
-        <tr
+        <caption
           style={{
-            display: "flex",
-            alignItems: "center",
+            backgroundColor: "#ff5a61",
+            color: "black",
+            fontWeight: 700,
+            fontSize: "25px",
+          }}
+        >
+          Crypto Table
+        </caption>
+        <thead
+          style={{
+            display: "block",
             minHeight: "40px",
             minWidth: "500px",
+            backgroundColor: "#ffdf4a",
           }}
         >
-          <th
+          <tr
             style={{
-              textAlign: "left",
-              minWidth: "250px",
-              paddingLeft: 20,
-              whiteSpace: "nowrap",
-              fontWeight: 700,
-              fontSize: "20px",
+              display: "flex",
+              alignItems: "center",
+              minHeight: "40px",
+              minWidth: "500px",
             }}
           >
-            Coin
-          </th>
-          <th
-            style={{
-              textAlign: "left",
-              width: "50%",
-              paddingLeft: 20,
-              whiteSpace: "nowrap",
-              fontWeight: 700,
-              fontSize: "20px",
-            }}
+            <th
+              style={{
+                textAlign: "left",
+                minWidth: "250px",
+                paddingLeft: 20,
+                whiteSpace: "nowrap",
+                fontWeight: 700,
+                fontSize: "20px",
+              }}
+            >
+              Coin
+            </th>
+            <th
+              style={{
+                textAlign: "left",
+                width: "50%",
+                paddingLeft: 20,
+                whiteSpace: "nowrap",
+                fontWeight: 700,
+                fontSize: "20px",
+              }}
+            >
+              Price
+            </th>
+          </tr>
+        </thead>
+        <tbody style={{ overflowX: "hidden" }}>
+          <FixedSizeList
+            height={400}
+            width={500}
+            itemSize={40}
+            itemCount={coins.length}
           >
-            Price
-          </th>
-        </tr>
-      </thead>
-      <tbody style={{ overflowX: "hidden" }}>
-        <FixedSizeList
-          height={400}
-          width={500}
-          itemSize={40}
-          itemCount={coins.length}
-        >
-          {({ index, style }) => {
-            const coin = coins[index];
-            if (!coin) {
-              return null;
-            }
-            const matchingCoin = Array.isArray(changePrice)
-              ? changePrice.find((changeCoin) => changeCoin.s === coin?.symbol)
-              : undefined;
-            if (matchingCoin && matchingCoin.c) {
-              coin.price = matchingCoin.c;
-            }
-            const price = Number(coin.price).toFixed(5);
-            return (
-              <tr
-                key={index}
-                style={{
-                  ...style,
-                  height: "40px",
-                  minWidth: "500px",
-                  backgroundColor: "#ff9f53",
-                }}
-              >
-                <td
+            {({ index, style }) => {
+              const coin = coins[index];
+              if (!coin) {
+                return null;
+              }
+              const matchingCoin = Array.isArray(changePrice)
+                ? changePrice.find(
+                    (changeCoin) => changeCoin.s === coin?.symbol
+                  )
+                : undefined;
+              if (matchingCoin && matchingCoin.c) {
+                coin.price = matchingCoin.c;
+              }
+              const price = Number(coin.price).toFixed(5);
+              return (
+                <tr
+                  key={index}
                   style={{
-                    textAlign: "left",
-                    width: "250px",
-                    borderTop: "0px",
-                    whiteSpace: "nowrap",
-                    paddingLeft: 20,
-                    fontWeight: 400,
-                    fontSize: "15px",
+                    ...style,
+                    height: "40px",
+                    minWidth: "500px",
+                    backgroundColor: "#ff9f53",
                   }}
                 >
-                  {coin?.symbol}
-                </td>
-                <td
-                  style={{
-                    textAlign: "left",
-                    width: "240px",
-                    borderTop: "0px",
-                    whiteSpace: "nowrap",
-                    paddingLeft: 20,
-                    fontWeight: 600,
-                    fontSize: "15px",
-                  }}
-                >
-                  ${" "}
-                  <span
-                    style={
-                      {
-                        // color: changeColor && "red",
-                        // transitionProperty: "color",
-                        // transitionDuration: "1s",
-                        // transitionTimingFunction: "ease-in-out",
-                      }
-                    }
+                  <td
+                    style={{
+                      textAlign: "left",
+                      width: "250px",
+                      borderTop: "0px",
+                      whiteSpace: "nowrap",
+                      paddingLeft: 20,
+                      fontWeight: 400,
+                      fontSize: "15px",
+                    }}
                   >
-                    {price}
-                  </span>
-                </td>
-              </tr>
-            );
-          }}
-        </FixedSizeList>
-      </tbody>
-    </table>
+                    {coin?.symbol}
+                  </td>
+                  <td
+                    style={{
+                      textAlign: "left",
+                      width: "240px",
+                      borderTop: "0px",
+                      whiteSpace: "nowrap",
+                      paddingLeft: 20,
+                      fontWeight: 600,
+                      fontSize: "15px",
+                    }}
+                  >
+                    ${" "}
+                    <span
+                      style={
+                        {
+                          // color: changeColor && "red",
+                          // transitionProperty: "color",
+                          // transitionDuration: "1s",
+                          // transitionTimingFunction: "ease-in-out",
+                        }
+                      }
+                    >
+                      {price}
+                    </span>
+                  </td>
+                </tr>
+              );
+            }}
+          </FixedSizeList>
+        </tbody>
+      </table>
+    </div>
   );
 };

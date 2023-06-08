@@ -1,11 +1,11 @@
 import React from "react";
 import { useEffect, useState } from "react";
 
-export const OrderBook = () => {
+export const OrderBook = ({ coin }) => {
   const [ordersBook, setOrdersBook] = useState({});
   useEffect(() => {
     const ws = new WebSocket(
-      "wss://testnet.binancefuture.com/stream?streams=btcusdt@depth"
+      `wss://testnet.binancefuture.com/stream?streams=${coin}btcusdt@depth`
     );
 
     ws.onopen = () => {
@@ -29,7 +29,10 @@ export const OrderBook = () => {
       ws.close();
     };
   }, []);
-  console.log(ordersBook);
+
+  const { data } = ordersBook;
+  const buying = data?.a;
+  const selling = data?.b;
   return (
     <div
       style={{ display: "flex", flexDirection: "column", minWidth: "500px" }}
@@ -78,26 +81,42 @@ export const OrderBook = () => {
         <ul
           style={{ listStyle: "none", minWidth: "50%", margin: 0, padding: 0 }}
         >
-          <li
-            style={{
-              display: "flex",
-              columnGap: "90px",
-              paddingLeft: "20px",
-            }}
-          >
-            <span>1</span>
-            <span style={{ marginLeft: "60px" }}>f</span>
-          </li>
+          {selling &&
+            selling.map((coin, index) => {
+              return (
+                <li
+                  key={index}
+                  style={{
+                    display: "flex",
+                    columnGap: "30px",
+                    paddingLeft: "20px",
+                  }}
+                >
+                  <span>{coin[0]}</span>
+                  <span style={{ marginLeft: "60px" }}>{coin[1]}</span>
+                </li>
+              );
+            })}
         </ul>
         <ul
           style={{ listStyle: "none", minWidth: "50%", margin: 0, padding: 0 }}
         >
-          <li
-            style={{ display: "flex", columnGap: "90px", paddingLeft: "20px" }}
-          >
-            <span>1</span>
-            <span style={{ marginLeft: "60px" }}>f</span>
-          </li>
+          {buying &&
+            buying.map((coin, index) => {
+              return (
+                <li
+                  key={index}
+                  style={{
+                    display: "flex",
+                    columnGap: "30px",
+                    paddingLeft: "20px",
+                  }}
+                >
+                  <span>{coin[0]}</span>
+                  <span style={{ marginLeft: "60px" }}>{coin[1]}</span>
+                </li>
+              );
+            })}
         </ul>
       </div>
     </div>

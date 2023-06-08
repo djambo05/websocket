@@ -6,10 +6,9 @@ function App() {
     <div
       style={{
         display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        rowGap: "30px",
+        columnGap: "30px",
+        margin: "30px",
+        height: "auto",
       }}
     >
       <Binance />
