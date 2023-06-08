@@ -6,7 +6,6 @@ import { FixedSizeList } from "react-window";
 
 export const Binance = () => {
   const [changePrice, setChangePrice] = useState({});
-  //   const [changeColor, setChangeColor] = useState(false);
   const {
     data: dataPrices,
     isLoading: isLoadingPrices,
@@ -27,7 +26,6 @@ export const Binance = () => {
     };
 
     ws.onmessage = (event) => {
-      //   console.log("Received message:", event.data);
       const eventData = JSON.parse(event.data);
       setChangePrice(eventData.data);
     };
@@ -134,7 +132,6 @@ export const Binance = () => {
               : undefined;
             if (matchingCoin && matchingCoin.c) {
               coin.price = matchingCoin.c;
-              // setChangeColor(true);
             }
             const price = Number(coin.price).toFixed(5);
             return (
