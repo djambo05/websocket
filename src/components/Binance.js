@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 import { BinanceService } from "../services/BinanceApi.service";
 import { FixedSizeList } from "react-window";
 
-export const Binance = () => {
+export const Binance = ({ setCoin }) => {
   const [changePrice, setChangePrice] = useState({});
   const {
     data: dataPrices,
@@ -16,6 +16,7 @@ export const Binance = () => {
     staleTime: Infinity,
     cacheTime: Infinity,
   });
+
   useEffect(() => {
     const ws = new WebSocket(
       "wss://stream.binancefuture.com/stream?streams=!miniTicker@arr"
@@ -158,6 +159,7 @@ export const Binance = () => {
                       fontSize: "15px",
                     }}
                   >
+                    <button onClick={() => setCoin(coin?.symbol)}>btn</button>
                     {coin?.symbol}
                   </td>
                   <td

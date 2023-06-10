@@ -5,7 +5,7 @@ export const OrderBook = ({ coin }) => {
   const [ordersBook, setOrdersBook] = useState({});
   useEffect(() => {
     const ws = new WebSocket(
-      `wss://testnet.binancefuture.com/stream?streams=${coin}btcusdt@depth`
+      `wss://testnet.binancefuture.com/stream?streams=${coin.toLowerCase()}@depth`
     );
 
     ws.onopen = () => {
@@ -28,7 +28,7 @@ export const OrderBook = ({ coin }) => {
     return () => {
       ws.close();
     };
-  }, []);
+  }, [coin]);
 
   const { data } = ordersBook;
   const buying = data?.a;
@@ -37,16 +37,17 @@ export const OrderBook = ({ coin }) => {
     <div
       style={{ display: "flex", flexDirection: "column", minWidth: "500px" }}
     >
-      <caption
+      <div
         style={{
+          paddingLeft: "20px",
           backgroundColor: "#ff5a61",
           color: "black",
           fontWeight: 700,
           fontSize: "25px",
         }}
       >
-        Orders Book
-      </caption>
+        Orders Book {coin}
+      </div>
       <div
         style={{ display: "flex", width: "100%", backgroundColor: "#ffdf4a" }}
       >

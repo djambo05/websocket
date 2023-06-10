@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { Binance } from "./components/Binance";
 import { OrderBook } from "./components/OrderBook";
 
 function App() {
+  const [coin, setCoin] = useState("");
   return (
     <div
       style={{
@@ -11,8 +13,8 @@ function App() {
         height: "auto",
       }}
     >
-      <Binance />
-      <OrderBook />
+      <Binance setCoin={setCoin} />
+      <OrderBook coin={coin} />
     </div>
   );
 }
