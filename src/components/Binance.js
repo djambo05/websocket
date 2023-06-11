@@ -1,22 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 import { useEffect } from "react";
-import { useQuery } from "react-query";
-import { BinanceService } from "../services/BinanceApi.service";
 import { FixedSizeList } from "react-window";
+import { Row } from "./Row";
+import { getAllPrices } from '../services/BinanceApi.service'
+import { useQuery } from "react-query";
 
 export const Binance = () => {
-  const [changePrice, setChangePrice] = useState({});
-  //   const [changeColor, setChangeColor] = useState(false);
-  const {
-    data: dataPrices,
-    isLoading: isLoadingPrices,
-    isError: isErrorPrices,
-  } = useQuery(["binanceAll"], BinanceService.getAllPrices, {
-    keepPreviousData: true,
-    refetchOnWindowFocus: false,
-    staleTime: Infinity,
-    cacheTime: Infinity,
-  });
+
+
+  const { data: symbols = {} } = useQuery(['symbols', 'hjj'], getAllPrices)
+  const symbolArray = Object.values(symbols);
+
   useEffect(() => {
     const ws = new WebSocket(
       "wss://stream.binancefuture.com/stream?streams=!miniTicker@arr"
@@ -27,9 +21,16 @@ export const Binance = () => {
     };
 
     ws.onmessage = (event) => {
-      //   console.log("Received message:", event.data);
-      const eventData = JSON.parse(event.data);
-      setChangePrice(eventData.data);
+      const { data } = JSON.parse(event.data);
+      data.forEach(update => {
+        console.log(symbols[update.s])
+        const symbol = symbols[update.s];
+        if (symbol) {
+          symbol.price = update.c;
+          symbol.time = update.E;
+        }
+
+      })
     };
 
     ws.onclose = () => {
@@ -43,17 +44,9 @@ export const Binance = () => {
     return () => {
       ws.close();
     };
-  }, []);
 
-  if (isLoadingPrices) {
-    return <h1>Loading...</h1>;
-  }
-  if (isErrorPrices) {
-    return <h1>Error</h1>;
-  }
-  if (!dataPrices) {
-    return <h1>No data</h1>;
-  }
+  }, [symbols]);
+
 
   return (
     <table
@@ -121,74 +114,79 @@ export const Binance = () => {
           width={500}
           itemSize={40}
           itemCount={
-            dataPrices
-              .filter((coin) => coin?.symbol?.toLowerCase().endsWith("usdt"))
-              .sort((a, b) => Number(b.price) - Number(a.price)).length
+            symbolArray.length
           }
         >
           {({ index, style }) => {
-            const coin = dataPrices[index];
-            if (!coin) {
-              return null;
-            }
-            const matchingCoin = Array.isArray(changePrice)
-              ? changePrice.find((changeCoin) => changeCoin.s === coin?.symbol)
-              : undefined;
-            if (matchingCoin && matchingCoin.c) {
-              coin.price = matchingCoin.c;
-              // setChangeColor(true);
-            }
-            const price = Number(coin.price).toFixed(5);
+            const symbol = symbolArray[index];
             return (
-              <tr
-                key={index}
-                style={{
-                  ...style,
-                  height: "40px",
-                  minWidth: "500px",
-                  backgroundColor: "#ff9f53",
-                }}
-              >
-                <td
-                  style={{
-                    textAlign: "left",
-                    width: "250px",
-                    borderTop: "0px",
-                    whiteSpace: "nowrap",
-                    paddingLeft: 20,
-                    fontWeight: 400,
-                    fontSize: "15px",
-                  }}
-                >
-                  {coin?.symbol}
-                </td>
-                <td
-                  style={{
-                    textAlign: "left",
-                    width: "240px",
-                    borderTop: "0px",
-                    whiteSpace: "nowrap",
-                    paddingLeft: 20,
-                    fontWeight: 600,
-                    fontSize: "15px",
-                  }}
-                >
-                  ${" "}
-                  <span
-                    style={
-                      {
-                        // color: changeColor && "red",
-                        // transitionProperty: "color",
-                        // transitionDuration: "1s",
-                        // transitionTimingFunction: "ease-in-out",
-                      }
-                    }
-                  >
-                    {price}
-                  </span>
-                </td>
-              </tr>
-            );
+              <div key={symbol.symbol} style={{ ...style }}>
+                <Row symbol={symbol} />
+              </div>
+
+            )
+            // const coin = dataPrices[index];
+            // if (!coin) {
+            //   return null;
+            // }
+            // const matchingCoin = Array.isArray(changePrice)
+            //   ? changePrice.find((changeCoin) => changeCoin.s === coin?.symbol)
+            //   : undefined;
+            // if (matchingCoin && matchingCoin.c) {
+            //   coin.price = matchingCoin.c;
+            //   // setChangeColor(true);
+            // }
+            // const price = Number(coin.price).toFixed(5);
+            // return (
+            //   <tr
+            //     key={index}
+            //     style={{
+            //       ...style,
+            //       height: "40px",
+            //       minWidth: "500px",
+            //       backgroundColor: "#ff9f53",
+            //     }}
+            //   >
+            //     <td
+            //       style={{
+            //         textAlign: "left",
+            //         width: "250px",
+            //         borderTop: "0px",
+            //         whiteSpace: "nowrap",
+            //         paddingLeft: 20,
+            //         fontWeight: 400,
+            //         fontSize: "15px",
+            //       }}
+            //     >
+            //       {coin?.symbol}
+            //     </td>
+            //     <td
+            //       style={{
+            //         textAlign: "left",
+            //         width: "240px",
+            //         borderTop: "0px",
+            //         whiteSpace: "nowrap",
+            //         paddingLeft: 20,
+            //         fontWeight: 600,
+            //         fontSize: "15px",
+            //       }}
+            //     >
+            //       ${" "}
+            //       <span
+            //         style={
+            //           {
+            //             // color: changeColor && "red",
+            //             // transitionProperty: "color",
+            //             // transitionDuration: "1s",
+            //             // transitionTimingFunction: "ease-in-out",
+            //           }
+            //         }
+            //       >
+            //         {price}
+            //       </span>
+            //     </td>
+            //   </tr>
+            // );
           }}
         </FixedSizeList>
       </tbody>
