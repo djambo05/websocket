@@ -2,10 +2,11 @@ import React from "react";
 import { useEffect, useState } from "react";
 
 export const OrderBook = ({ coin }) => {
-  const [ordersBook, setOrdersBook] = useState({});
+  const currentCurryncyInfo = {};
   useEffect(() => {
     const ws = new WebSocket(
-      `wss://stream.binance.com:9443/stream?streams=${coin.toLowerCase()}@depth`
+      // `wss://stream.binance.com:9443/stream?streams=${coin.toLowerCase()}@depth`
+      `wss://stream.binance.com:9443/stream?streams=btcusdt@depth`
     );
 
     ws.onopen = () => {
@@ -14,7 +15,7 @@ export const OrderBook = ({ coin }) => {
 
     ws.onmessage = (event) => {
       const eventData = JSON.parse(event.data);
-      setOrdersBook(eventData);
+      currentCurryncyInfo[0] = eventData.data;
     };
 
     ws.onclose = () => {
@@ -28,9 +29,9 @@ export const OrderBook = ({ coin }) => {
     return () => {
       ws.close();
     };
-  }, [coin]);
+  }, []);
 
-  const { data } = ordersBook;
+  const { data } = currentCurryncyInfo[0];
   const buying = data?.a;
   const selling = data?.b;
   return (
