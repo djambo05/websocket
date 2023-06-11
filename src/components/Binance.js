@@ -5,11 +5,13 @@ import { Row } from "./Row";
 import { getAllPrices } from '../services/BinanceApi.service'
 import { useQuery } from "react-query";
 
+
 export const Binance = () => {
 
 
   const { data: symbols = {} } = useQuery(['symbols', 'hjj'], getAllPrices)
   const symbolArray = Object.values(symbols);
+
 
   useEffect(() => {
     const ws = new WebSocket(
@@ -21,6 +23,7 @@ export const Binance = () => {
     };
 
     ws.onmessage = (event) => {
+
       const { data } = JSON.parse(event.data);
       data.forEach(update => {
         console.log(symbols[update.s])
@@ -31,6 +34,7 @@ export const Binance = () => {
         }
 
       })
+
     };
 
     ws.onclose = () => {
@@ -45,65 +49,78 @@ export const Binance = () => {
       ws.close();
     };
 
+
   }, [symbols]);
 
-
   return (
-    <table
-      style={{
-        minWidth: "500px",
-        tableLayout: "fixed",
-        borderCollapse: "collapse",
-      }}
-    >
-      <caption
+    <div>
+      <table
         style={{
-          backgroundColor: "#ff5a61",
-          color: "black",
-          fontWeight: 700,
-          fontSize: "25px",
-        }}
-      >
-        Crypto Table
-      </caption>
-      <thead
-        style={{
-          display: "block",
-          minHeight: "40px",
           minWidth: "500px",
-          backgroundColor: "#ffdf4a",
+          tableLayout: "fixed",
+          borderCollapse: "collapse",
         }}
       >
-        <tr
+        <caption
           style={{
-            display: "flex",
-            alignItems: "center",
-            minHeight: "40px",
-            minWidth: "500px",
+            backgroundColor: "#ff5a61",
+            color: "black",
+            fontWeight: 700,
+            fontSize: "25px",
           }}
         >
-          <th
+          Crypto Table
+        </caption>
+        <thead
+          style={{
+            display: "block",
+            minHeight: "40px",
+            minWidth: "500px",
+            backgroundColor: "#ffdf4a",
+          }}
+        >
+          <tr
             style={{
-              textAlign: "left",
-              minWidth: "250px",
-              paddingLeft: 20,
-              whiteSpace: "nowrap",
-              fontWeight: 700,
-              fontSize: "20px",
+              display: "flex",
+              alignItems: "center",
+              minHeight: "40px",
+              minWidth: "500px",
             }}
           >
-            Coin
-          </th>
-          <th
-            style={{
-              textAlign: "left",
-              width: "50%",
-              paddingLeft: 20,
-              whiteSpace: "nowrap",
-              fontWeight: 700,
-              fontSize: "20px",
-            }}
+            <th
+              style={{
+                textAlign: "left",
+                minWidth: "250px",
+                paddingLeft: 20,
+                whiteSpace: "nowrap",
+                fontWeight: 700,
+                fontSize: "20px",
+              }}
+            >
+              Coin
+            </th>
+            <th
+              style={{
+                textAlign: "left",
+                width: "50%",
+                paddingLeft: 20,
+                whiteSpace: "nowrap",
+                fontWeight: 700,
+                fontSize: "20px",
+              }}
+            >
+              Price
+            </th>
+          </tr>
+        </thead>
+        <tbody style={{ overflowX: "hidden" }}>
+          <FixedSizeList
+            height={400}
+            width={500}
+            itemSize={40}
+            itemCount={coins.length}
           >
+
             Price
           </th>
         </tr>
@@ -125,71 +142,11 @@ export const Binance = () => {
               </div>
 
             )
-            // const coin = dataPrices[index];
-            // if (!coin) {
-            //   return null;
-            // }
-            // const matchingCoin = Array.isArray(changePrice)
-            //   ? changePrice.find((changeCoin) => changeCoin.s === coin?.symbol)
-            //   : undefined;
-            // if (matchingCoin && matchingCoin.c) {
-            //   coin.price = matchingCoin.c;
-            //   // setChangeColor(true);
-            // }
-            // const price = Number(coin.price).toFixed(5);
-            // return (
-            //   <tr
-            //     key={index}
-            //     style={{
-            //       ...style,
-            //       height: "40px",
-            //       minWidth: "500px",
-            //       backgroundColor: "#ff9f53",
-            //     }}
-            //   >
-            //     <td
-            //       style={{
-            //         textAlign: "left",
-            //         width: "250px",
-            //         borderTop: "0px",
-            //         whiteSpace: "nowrap",
-            //         paddingLeft: 20,
-            //         fontWeight: 400,
-            //         fontSize: "15px",
-            //       }}
-            //     >
-            //       {coin?.symbol}
-            //     </td>
-            //     <td
-            //       style={{
-            //         textAlign: "left",
-            //         width: "240px",
-            //         borderTop: "0px",
-            //         whiteSpace: "nowrap",
-            //         paddingLeft: 20,
-            //         fontWeight: 600,
-            //         fontSize: "15px",
-            //       }}
-            //     >
-            //       ${" "}
-            //       <span
-            //         style={
-            //           {
-            //             // color: changeColor && "red",
-            //             // transitionProperty: "color",
-            //             // transitionDuration: "1s",
-            //             // transitionTimingFunction: "ease-in-out",
-            //           }
-            //         }
-            //       >
-            //         {price}
-            //       </span>
-            //     </td>
-            //   </tr>
-            // );
+            
           }}
         </FixedSizeList>
       </tbody>
     </table>
+
   );
 };

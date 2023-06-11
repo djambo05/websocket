@@ -1,15 +1,20 @@
+import { useState } from "react";
 import { Binance } from "./components/Binance";
+import { OrderBook } from "./components/OrderBook";
 
 function App() {
+  const [coin, setCoin] = useState("");
   return (
     <div
       style={{
         display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        columnGap: "30px",
+        margin: "30px",
+        height: "auto",
       }}
     >
-      <Binance />
+      <Binance setCoin={setCoin} />
+      <OrderBook coin={coin} />
     </div>
   );
 }
