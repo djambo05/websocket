@@ -2,20 +2,16 @@ import React from "react";
 import { useEffect } from "react";
 import { FixedSizeList } from "react-window";
 import { Row } from "./Row";
-import { getAllPrices } from '../services/BinanceApi.service'
+import { getAllPrices } from "../services/BinanceApi.service";
 import { useQuery } from "react-query";
 
-
 export const Binance = () => {
-
-
-  const { data: symbols = {} } = useQuery(['symbols', 'hjj'], getAllPrices)
+  const { data: symbols = {} } = useQuery(["symbols", "hjj"], getAllPrices);
   const symbolArray = Object.values(symbols);
-
 
   useEffect(() => {
     const ws = new WebSocket(
-      "wss://stream.binancefuture.com/stream?streams=!miniTicker@arr"
+      "wss://stream.binance.com:9443/stream?streams=!miniTicker@arr"
     );
 
     ws.onopen = () => {
@@ -23,18 +19,15 @@ export const Binance = () => {
     };
 
     ws.onmessage = (event) => {
-
       const { data } = JSON.parse(event.data);
-      data.forEach(update => {
-        console.log(symbols[update.s])
+      data.forEach((update) => {
+        // console.log(symbols[update.s]);
         const symbol = symbols[update.s];
         if (symbol) {
           symbol.price = update.c;
           symbol.time = update.E;
         }
-
-      })
-
+      });
     };
 
     ws.onclose = () => {
@@ -48,8 +41,6 @@ export const Binance = () => {
     return () => {
       ws.close();
     };
-
-
   }, [symbols]);
 
   return (
@@ -113,40 +104,25 @@ export const Binance = () => {
             </th>
           </tr>
         </thead>
+
         <tbody style={{ overflowX: "hidden" }}>
           <FixedSizeList
             height={400}
             width={500}
             itemSize={40}
-            itemCount={coins.length}
+            itemCount={symbolArray.length}
           >
-
-            Price
-          </th>
-        </tr>
-      </thead>
-      <tbody style={{ overflowX: "hidden" }}>
-        <FixedSizeList
-          height={400}
-          width={500}
-          itemSize={40}
-          itemCount={
-            symbolArray.length
-          }
-        >
-          {({ index, style }) => {
-            const symbol = symbolArray[index];
-            return (
-              <div key={symbol.symbol} style={{ ...style }}>
-                <Row symbol={symbol} />
-              </div>
-
-            )
-            
-          }}
-        </FixedSizeList>
-      </tbody>
-    </table>
-
+            {({ index, style }) => {
+              const symbol = symbolArray[index];
+              return (
+                <div onClick={{}} key={symbol.symbol} style={{ ...style }}>
+                  <Row symbol={symbol} />
+                </div>
+              );
+            }}
+          </FixedSizeList>
+        </tbody>
+      </table>
+    </div>
   );
 };
