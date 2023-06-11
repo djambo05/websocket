@@ -5,7 +5,7 @@ export const OrderBook = ({ coin }) => {
   const [ordersBook, setOrdersBook] = useState({});
   useEffect(() => {
     const ws = new WebSocket(
-      `wss://testnet.binancefuture.com/stream?streams=${coin.toLowerCase()}@depth`
+      `wss://stream.binance.com:9443/stream?streams=${coin.toLowerCase()}@depth`
     );
 
     ws.onopen = () => {

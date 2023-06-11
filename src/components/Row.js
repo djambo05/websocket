@@ -2,7 +2,8 @@ import { observer } from "mobx-react";
 
 export const Row = observer((props) => {
   const { symbol } = props;
-
+  const price = Number(symbol.price).toFixed(5);
+  const cryptoCurrency = symbol.symbol;
   return (
     <div
       style={{
@@ -13,10 +14,10 @@ export const Row = observer((props) => {
       }}
     >
       <div style={{ width: "100px", marginLeft: "20px" }}>
-        <span>{symbol.symbol}</span>
+        <span>{cryptoCurrency}</span>
       </div>
       <div style={{ width: "100px" }}>
-        <span>{symbol.price}</span>
+        <span>{price}</span>
       </div>
     </div>
   );

@@ -7,7 +7,9 @@ import { useQuery } from "react-query";
 
 export const Binance = () => {
   const { data: symbols = {} } = useQuery(["symbols", "hjj"], getAllPrices);
-  const symbolArray = Object.values(symbols);
+  const symbolArray = Object.values(symbols)
+    .filter((coin) => coin.symbol.toLowerCase().endsWith("usdt"))
+    .sort((a, b) => Number(b.price) - Number(a.price));
 
   useEffect(() => {
     const ws = new WebSocket(
@@ -21,7 +23,6 @@ export const Binance = () => {
     ws.onmessage = (event) => {
       const { data } = JSON.parse(event.data);
       data.forEach((update) => {
-        // console.log(symbols[update.s]);
         const symbol = symbols[update.s];
         if (symbol) {
           symbol.price = update.c;
@@ -115,7 +116,11 @@ export const Binance = () => {
             {({ index, style }) => {
               const symbol = symbolArray[index];
               return (
-                <div onClick={{}} key={symbol.symbol} style={{ ...style }}>
+                <div
+                  onClick={() => {}}
+                  key={symbol.symbol}
+                  style={{ ...style }}
+                >
                   <Row symbol={symbol} />
                 </div>
               );
