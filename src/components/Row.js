@@ -13,11 +13,18 @@ export const Row = observer((props) => {
         height: "100%",
       }}
     >
-      <div style={{ width: "75px", marginLeft: "20px" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          width: "75px",
+          marginLeft: "20px",
+        }}
+      >
         <span>{cryptoCurrency}</span>
       </div>
       <button onClick={() => setCoin(cryptoCurrency.toLowerCase())}>btn</button>
-      <div style={{ width: "100px" }}>
+      <div style={{ display: "flex", alignItems: "center", width: "100px" }}>
         <span>{price}</span>
       </div>
     </div>
