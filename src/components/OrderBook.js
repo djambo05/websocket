@@ -2,11 +2,11 @@ import React from "react";
 import { useEffect, useState } from "react";
 
 export const OrderBook = ({ coin }) => {
-  const currentCurryncyInfo = {};
+  const [data, setData] = useState({});
   useEffect(() => {
     const ws = new WebSocket(
       // `wss://stream.binance.com:9443/stream?streams=${coin.toLowerCase()}@depth`
-      `wss://stream.binance.com:9443/stream?streams=btcusdt@depth`
+      `wss://stream.binance.com:9443/stream?streams=${coin}@depth`
     );
 
     ws.onopen = () => {
@@ -15,7 +15,7 @@ export const OrderBook = ({ coin }) => {
 
     ws.onmessage = (event) => {
       const eventData = JSON.parse(event.data);
-      currentCurryncyInfo[0] = eventData.data;
+      setData(eventData.data);
     };
 
     ws.onclose = () => {
@@ -29,14 +29,13 @@ export const OrderBook = ({ coin }) => {
     return () => {
       ws.close();
     };
-  }, []);
+  }, [coin]);
 
-  const { data } = currentCurryncyInfo[0];
   const buying = data?.a;
   const selling = data?.b;
   return (
     <div
-      style={{ display: "flex", flexDirection: "column", minWidth: "500px" }}
+      style={{ display: "flex", flexDirection: "column", minWidth: "600px" }}
     >
       <div
         style={{
@@ -94,8 +93,10 @@ export const OrderBook = ({ coin }) => {
                     paddingLeft: "20px",
                   }}
                 >
-                  <span>{coin[0]}</span>
-                  <span style={{ marginLeft: "60px" }}>{coin[1]}</span>
+                  <span>{Number(coin[0]).toFixed(5)}</span>
+                  <span style={{ marginLeft: "60px" }}>
+                    {Number(coin[1]).toFixed(5)}
+                  </span>
                 </li>
               );
             })}
@@ -114,8 +115,10 @@ export const OrderBook = ({ coin }) => {
                     paddingLeft: "20px",
                   }}
                 >
-                  <span>{coin[0]}</span>
-                  <span style={{ marginLeft: "60px" }}>{coin[1]}</span>
+                  <span>{Number(coin[0]).toFixed(5)}</span>
+                  <span style={{ marginLeft: "60px" }}>
+                    {Number(coin[1]).toFixed(5)}
+                  </span>
                 </li>
               );
             })}

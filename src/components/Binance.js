@@ -5,7 +5,7 @@ import { Row } from "./Row";
 import { getAllPrices } from "../services/BinanceApi.service";
 import { useQuery } from "react-query";
 
-export const Binance = () => {
+export const Binance = ({ setCoin }) => {
   const { data: symbols = {} } = useQuery(["symbols", "hjj"], getAllPrices);
   const symbolArray = Object.values(symbols)
     .filter((coin) => coin.symbol.toLowerCase().endsWith("usdt"))
@@ -116,12 +116,8 @@ export const Binance = () => {
             {({ index, style }) => {
               const symbol = symbolArray[index];
               return (
-                <div
-                  onClick={() => {}}
-                  key={symbol.symbol}
-                  style={{ ...style }}
-                >
-                  <Row symbol={symbol} />
+                <div key={symbol.symbol} style={{ ...style }}>
+                  <Row symbol={symbol} setCoin={setCoin} />
                 </div>
               );
             }}
