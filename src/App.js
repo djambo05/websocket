@@ -1,6 +1,8 @@
 import { Binance } from "./components/Binance";
+import { useQueryData } from "./services/BinanceApi.service";
 
 function App() {
+
   return (
     <div
       style={{

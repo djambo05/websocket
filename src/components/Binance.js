@@ -3,13 +3,22 @@ import { useEffect } from "react";
 import { FixedSizeList } from "react-window";
 import { Row } from "./Row";
 import { getAllPrices } from '../services/BinanceApi.service'
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 
 export const Binance = () => {
+  const qc = useQueryClient();
+  console.log(qc)
+  const { data: symbols = {} } = useQuery(['symbols'], async () => {
+    const data = await getAllPrices()
+    return []
 
-
-  const { data: symbols = {} } = useQuery(['symbols', 'hjj'], getAllPrices)
-  const symbolArray = Object.values(symbols);
+    data.forEach((item) => {
+      const key = ['symbols', item.symbol];
+      qc.setQueryData(key, item)
+      return qc.getQueryCache().get(JSON.stringify(key));
+    })
+  })
+  console.log(symbols)
 
   useEffect(() => {
     const ws = new WebSocket(
@@ -23,13 +32,20 @@ export const Binance = () => {
     ws.onmessage = (event) => {
       const { data } = JSON.parse(event.data);
       data.forEach(update => {
-        console.log(symbols[update.s])
-        const symbol = symbols[update.s];
-        if (symbol) {
-          symbol.price = update.c;
-          symbol.time = update.E;
-        }
+        const key = ['symbols', update.s];
+        const symbol = qc.getQueryData(key);
+        console.log(symbol)
 
+        qc.setQueryData(key, {
+          symbol: update.s,
+          price: update.c,
+          time: update.E
+        });
+        if (!symbol) {
+          const query = qc.getQueryCache().get(JSON.stringify(key))
+          const symbols = qc.getQueryData(['symbols']);
+          qc.setQueryData(['symbols'], [...symbols, query])
+        }
       })
     };
 
@@ -45,7 +61,7 @@ export const Binance = () => {
       ws.close();
     };
 
-  }, [symbols]);
+  }, [qc, symbols]);
 
 
   return (
@@ -114,14 +130,14 @@ export const Binance = () => {
           width={500}
           itemSize={40}
           itemCount={
-            symbolArray.length
+            symbols.length
           }
         >
           {({ index, style }) => {
-            const symbol = symbolArray[index];
+            const symbol = symbols[index];
             return (
-              <div key={symbol.symbol} style={{ ...style }}>
-                <Row symbol={symbol} />
+              <div key={symbol.state.data.symbol} style={{ ...style }}>
+                <Row symbol={symbol.state.data} />
               </div>
 
             )

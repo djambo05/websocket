@@ -1,9 +1,10 @@
-import { observer } from 'mobx-react';
+import { useQuery } from 'react-query';
+import { queryClient } from '..';
 
-export const Row = observer((props) => {
-    const {symbol} = props;
-    console.log(props.symbolName)
-
+export const Row = ((props) => {
+    const symboll = props?.symbol?.symbol;
+    const {data: symbol} = useQuery(['symbols', symboll], () => queryClient.getQueryData(['symbols', symboll]))
+    console.log(symbol)
     return <div>
         {JSON.stringify(symbol)}
     </div>
