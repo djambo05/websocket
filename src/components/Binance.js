@@ -3,21 +3,17 @@ import { useEffect } from "react";
 import { FixedSizeList } from "react-window";
 import { Row } from "./Row";
 import { getAllPrices } from '../services/BinanceApi.service'
-import { useQuery, useQueryClient } from "react-query";
+import { useSymbolStore } from "../App";
+import { shallow } from 'zustand/shallow'
 
 export const Binance = () => {
-  const qc = useQueryClient();
-  console.log(qc)
-  const { data: symbols = {} } = useQuery(['symbols'], async () => {
-    const data = await getAllPrices()
-    return []
+  const symbols = useSymbolStore(state => Object.keys(state.symbols), shallow);
+  const addSymbol = useSymbolStore(state => state.addSymbol);
+  useEffect(() => {
+    getAllPrices()
+      .then(symbols => symbols.forEach(symbol => addSymbol(symbol)))
+  }, [addSymbol])
 
-    data.forEach((item) => {
-      const key = ['symbols', item.symbol];
-      qc.setQueryData(key, item)
-      return qc.getQueryCache().get(JSON.stringify(key));
-    })
-  })
   console.log(symbols)
 
   useEffect(() => {
@@ -32,20 +28,11 @@ export const Binance = () => {
     ws.onmessage = (event) => {
       const { data } = JSON.parse(event.data);
       data.forEach(update => {
-        const key = ['symbols', update.s];
-        const symbol = qc.getQueryData(key);
-        console.log(symbol)
-
-        qc.setQueryData(key, {
+        addSymbol({
           symbol: update.s,
           price: update.c,
           time: update.E
-        });
-        if (!symbol) {
-          const query = qc.getQueryCache().get(JSON.stringify(key))
-          const symbols = qc.getQueryData(['symbols']);
-          qc.setQueryData(['symbols'], [...symbols, query])
-        }
+        })
       })
     };
 
@@ -61,7 +48,7 @@ export const Binance = () => {
       ws.close();
     };
 
-  }, [qc, symbols]);
+  }, [addSymbol]);
 
 
   return (
@@ -136,8 +123,8 @@ export const Binance = () => {
           {({ index, style }) => {
             const symbol = symbols[index];
             return (
-              <div key={symbol.state.data.symbol} style={{ ...style }}>
-                <Row symbol={symbol.state.data} />
+              <div key={symbol} style={{ ...style }}>
+                <Row symbol={symbol} />
               </div>
 
             )

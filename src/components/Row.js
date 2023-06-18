@@ -1,11 +1,11 @@
 import { useQuery } from 'react-query';
 import { queryClient } from '..';
+import { useSymbolStore } from '../App';
 
 export const Row = ((props) => {
-    const symboll = props?.symbol?.symbol;
-    const {data: symbol} = useQuery(['symbols', symboll], () => queryClient.getQueryData(['symbols', symboll]))
-    console.log(symbol)
+    const symboll = useSymbolStore(state => state.symbols[props.symbol]);
+    console.log(symboll)
     return <div>
-        {JSON.stringify(symbol)}
+        {JSON.stringify(symboll)}
     </div>
 })
